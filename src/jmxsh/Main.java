@@ -153,6 +153,13 @@ public final class Main {
                 .hasArg(false)
                 .create("I")
         );
+
+        opts.addOption(
+            OptionBuilder.withLongOpt("quiet")
+                .withDescription("Quiet mode. Do not go into interactive mode.")
+                .hasArg(false)
+                .create("q")
+        );
         
         opts.addOption(
             OptionBuilder.withLongOpt("browse")
@@ -343,10 +350,24 @@ public final class Main {
                 }
             }
 
-            // 5b. Otherwise, start interactive session.
 
-            interactive = true;
-            historyEnabled = true;
+            // Run stdinput commands
+            if (commandLine.hasOption("quiet")) {
+
+                JInterp.setGlobal("argv", scriptArgs, 1);
+                JInterp.setGlobal("argc", scriptArgs.length-1);
+
+                JInterp.evaluateStdin();
+
+               System.exit(0);
+            } else {
+
+            // 5b. Otherwise, start interactive session
+
+               interactive = true;
+               historyEnabled = true;
+                       }
+
             if (commandLine.hasOption("nohistory")) {
                 historyEnabled = false;
             }
@@ -438,7 +459,7 @@ public final class Main {
                 System.err.println("Exception caught: " + e.getMessage());
             }
         }
-    }   
+    }
 
 }
 
